@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Fashion Key</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <header class="scrolled">
+        <div class="logo">FASHION KEY</div>
+        <div class="header-actions">
+            <span style="font-size: 0.8rem; text-transform: uppercase; margin-right: 1rem;">Marta García</span>
+            <a href="/" class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.7rem;">Salir</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="/dashboard" class="{{ 'active' if section == 'main' }}"><i data-lucide="layout"></i> Dashboard</a></li>
+                <li><a href="/body-analysis" class="{{ 'active' if section == 'body' }}"><i data-lucide="user"></i> Análisis Corporal</a></li>
+                <li><a href="/simulator" class="{{ 'active' if section == 'simulator' }}"><i data-lucide="shirt"></i> Simulador Outfit</a></li>
+                <li><a href="/inspiration" class="{{ 'active' if section == 'inspiration' }}"><i data-lucide="globe"></i> Fuentes de Inspiración</a></li>
+                <li><a href="/references" class="{{ 'active' if section == 'references' }}"><i data-lucide="bookmark"></i> Mis Referencias</a></li>
+                <li><a href="/hair-color" class="{{ 'active' if section == 'hair' }}"><i data-lucide="palette"></i> Color de Cabello</a></li>
+                <li><a href="/saved-looks" class="{{ 'active' if section == 'saved' }}"><i data-lucide="heart"></i> Looks Guardados</a></li>
+                <li><a href="/settings" class="{{ 'active' if section == 'settings' }}"><i data-lucide="settings"></i> Configuración</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            {% if section == 'main' %}
+            <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                <h2 class="serif">Tu Perfil de Estilo</h2>
+                <p style="font-size: 0.9rem; color: var(--gray-dark);">Resumen de tu identidad visual analizada por IA.</p>
+            </div>
+
+            <div class="editorial-grid" style="grid-template-columns: 2fr 1fr;">
+                <div class="card" style="height: 400px; display: flex; align-items: center; justify-content: center; background: var(--gray-light); overflow: hidden; padding: 0;">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                    <div style="position: absolute; text-align: center; color: white; background: rgba(0,0,0,0.2); padding: 2rem;">
+                        <p class="serif" style="font-size: 1.5rem;">Avatar Digital 3D</p>
+                        <p style="font-size: 0.7rem;">Vista Previa Activa</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="serif" style="font-size: 1rem; margin-bottom: 1.5rem;">Análisis Rápido</h3>
+                    <div style="font-size: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--gray-light); padding-bottom: 0.5rem;">
+                            <span>Tipo de Cuerpo</span>
+                            <span style="font-weight: 600;">Reloj de Arena</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--gray-light); padding-bottom: 0.5rem;">
+                            <span>Colorimetría</span>
+                            <span style="font-weight: 600;">Invierno Frío</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--gray-light); padding-bottom: 0.5rem;">
+                            <span>Estilo Predominante</span>
+                            <span style="font-weight: 600;">Minimalista Chic</span>
+                        </div>
+                    </div>
+                    <a href="/body-analysis" class="btn" style="width: 100%; margin-top: 1rem; padding: 0.8rem; font-size: 0.7rem;">Actualizar Análisis</a>
+                </div>
+            </div>
+
+            <div class="section-title" style="text-align: left; margin: 4rem 0 2rem;">
+                <h2 class="serif" style="font-size: 1.5rem;">Recomendaciones para ti</h2>
+            </div>
+            <div class="editorial-grid">
+                {% for product in products[:6] %}
+                <div class="product-card card">
+                    <div class="product-img-container" style="height: 300px;">
+                        <img src="{{ product.img }}" alt="{{ product.name }}">
+                    </div>
+                    <div class="product-info">
+                        <p class="product-category">{{ product.category }}</p>
+                        <h3 class="product-name" style="font-size: 0.9rem;">{{ product.name }}</h3>
+                        <p class="product-price">{{ product.price }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% elif section == 'inspiration' %}
+            <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                <h2 class="serif">Fuentes de Inspiración</h2>
+                <p style="font-size: 0.9rem; color: var(--gray-dark);">Tus portales de moda favoritos en un solo lugar.</p>
+            </div>
+
+            <div class="reference-form">
+                <h3 class="serif" style="font-size: 0.8rem; margin-bottom: 1rem;">Agregar Nuevo Enlace</h3>
+                <form action="/api/add-link" method="POST" style="display: flex; gap: 1rem;">
+                    <input type="url" name="url" placeholder="https://pinterest.com/tu-perfil" required style="flex: 1; padding: 1rem; border: 1px solid var(--gray-medium);">
+                    <button type="submit" class="btn" style="padding: 1rem 2rem;">Agregar</button>
+                </form>
+            </div>
+
+            <div class="inspiration-grid">
+                {% for site in inspiration %}
+                <div class="inspiration-card">
+                    <i data-lucide="star" class="fav-btn {{ 'active' if loop.index < 4 }}"></i>
+                    <img src="{{ site.img }}" alt="{{ site.name }}">
+                    <h3 class="serif" style="font-size: 0.9rem;">{{ site.name }}</h3>
+                    <a href="{{ site.url }}" target="_blank" style="font-size: 0.7rem; color: var(--accent); display: block; margin-top: 0.5rem;">VISITAR SITIO</a>
+                    <button style="background: none; border: none; font-size: 0.6rem; color: #ccc; margin-top: 1rem; cursor: pointer;">Eliminar</button>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% elif section == 'references' %}
+            <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                <h2 class="serif">Mis Referencias de Estilo</h2>
+                <p style="font-size: 0.9rem; color: var(--gray-dark);">Organiza tus descubrimientos por redes y categorías.</p>
+            </div>
+
+            <div class="editorial-grid">
+                <div class="card">
+                    <div class="category-tag">Pinterest</div>
+                    <h3 class="serif" style="font-size: 1rem;">Moodboard Otoño</h3>
+                    <p style="font-size: 0.8rem; margin: 1rem 0;">12 referencias guardadas</p>
+                    <a href="#" class="btn btn-outline" style="width: 100%; font-size: 0.7rem;">Ver Galería</a>
+                </div>
+                <div class="card">
+                    <div class="category-tag" style="background: #000;">TikTok</div>
+                    <h3 class="serif" style="font-size: 1rem;">Hauls & Reviews</h3>
+                    <p style="font-size: 0.8rem; margin: 1rem 0;">5 videos guardados</p>
+                    <a href="#" class="btn btn-outline" style="width: 100%; font-size: 0.7rem;">Ver Galería</a>
+                </div>
+                <div class="card">
+                    <div class="category-tag" style="background: #E1306C;">Instagram</div>
+                    <h3 class="serif" style="font-size: 1rem;">Street Style</h3>
+                    <p style="font-size: 0.8rem; margin: 1rem 0;">24 posts guardados</p>
+                    <a href="#" class="btn btn-outline" style="width: 100%; font-size: 0.7rem;">Ver Galería</a>
+                </div>
+            </div>
+
+            {% elif section == 'saved-looks' %}
+            <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                <h2 class="serif">Looks Guardados</h2>
+                <p style="font-size: 0.9rem; color: var(--gray-dark);">Tus combinaciones favoritas del simulador.</p>
+            </div>
+            <div class="editorial-grid">
+                {% for outfit in outfits %}
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <img src="{{ outfit.img }}" style="width: 100%; height: 300px; object-fit: cover;">
+                    <div style="padding: 1rem;">
+                        <h3 class="serif" style="font-size: 0.9rem;">{{ outfit.name }}</h3>
+                        <button class="btn btn-outline" style="width: 100%; margin-top: 1rem; font-size: 0.6rem;">Compartir</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <div class="card" style="text-align: center; padding: 5rem;">
+                <h2 class="serif">Sección en Desarrollo</h2>
+                <p>Pronto estará disponible la experiencia completa de {{ section }}.</p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

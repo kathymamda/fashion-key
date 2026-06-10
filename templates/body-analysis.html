@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Corporal | Fashion Key</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <header class="scrolled">
+        <div class="logo">FASHION KEY</div>
+        <div class="header-actions">
+            <span style="font-size: 0.8rem; text-transform: uppercase; margin-right: 1rem;">Marta García</span>
+            <a href="/" class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.7rem;">Salir</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="/dashboard"><i data-lucide="layout"></i> Dashboard</a></li>
+                <li><a href="/body-analysis" class="active"><i data-lucide="user"></i> Análisis Corporal</a></li>
+                <li><a href="/simulator"><i data-lucide="shirt"></i> Simulador Outfit</a></li>
+                <li><a href="/hair-color"><i data-lucide="palette"></i> Color de Cabello</a></li>
+                <li><a href="/saved-looks"><i data-lucide="heart"></i> Looks Guardados</a></li>
+                <li><a href="/settings"><i data-lucide="settings"></i> Configuración</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                <h2 class="serif">Análisis Biométrico</h2>
+                <p style="font-size: 0.9rem; color: var(--gray-dark);">Introduce tus medidas para que nuestra IA genere tu perfil exacto.</p>
+            </div>
+
+            <div class="card">
+                <form id="body-analysis-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
+                        <div class="form-group">
+                            <label>Altura (cm)</label>
+                            <input type="number" placeholder="170" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Peso (kg)</label>
+                            <input type="number" placeholder="65" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hombros (cm)</label>
+                            <input type="number" placeholder="90" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Pecho (cm)</label>
+                            <input type="number" placeholder="85" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cintura (cm)</label>
+                            <input type="number" placeholder="65" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cadera (cm)</label>
+                            <input type="number" placeholder="95" required>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; border-top: 1px solid var(--gray-light); padding-top: 2rem;">
+                        <label class="serif" style="font-size: 0.8rem; display: block; margin-bottom: 1rem;">Fotografía de Referencia (Opcional)</label>
+                        <div style="border: 2px dashed var(--gray-medium); padding: 3rem; text-align: center; cursor: pointer;">
+                            <i data-lucide="camera" style="margin-bottom: 1rem;"></i>
+                            <p style="font-size: 0.8rem;">Arrastra una foto o haz clic para subir</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 3rem; text-align: right;">
+                        <button type="submit" class="btn">Generar Perfil IA</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

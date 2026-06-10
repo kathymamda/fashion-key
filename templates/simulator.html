@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Outfits | Fashion Key</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 2rem;
+            height: calc(100vh - 12rem);
+        }
+        .scroll-panel {
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+        .clothing-item {
+            background: var(--gray-light);
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .clothing-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .clothing-item:hover {
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+        .clothing-item .info {
+            padding: 0.5rem;
+            font-size: 0.7rem;
+            text-align: center;
+            background: white;
+        }
+        .avatar-container {
+            background: #fdfdfd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--gray-medium);
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-container img {
+            height: 90%;
+            width: auto;
+            mix-blend-mode: multiply;
+        }
+    </style>
+</head>
+<body>
+    <header class="scrolled">
+        <div class="logo">FASHION KEY</div>
+        <div class="header-actions">
+            <span style="font-size: 0.8rem; text-transform: uppercase; margin-right: 1rem;">Marta García</span>
+            <a href="/" class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.7rem;">Salir</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="/dashboard"><i data-lucide="layout"></i> Dashboard</a></li>
+                <li><a href="/body-analysis"><i data-lucide="user"></i> Análisis Corporal</a></li>
+                <li><a href="/simulator" class="active"><i data-lucide="shirt"></i> Simulador Outfit</a></li>
+                <li><a href="/inspiration"><i data-lucide="globe"></i> Fuentes de Inspiración</a></li>
+                <li><a href="/references"><i data-lucide="bookmark"></i> Mis Referencias</a></li>
+                <li><a href="/hair-color"><i data-lucide="palette"></i> Color de Cabello</a></li>
+                <li><a href="/saved-looks"><i data-lucide="heart"></i> Looks Guardados</a></li>
+                <li><a href="/settings"><i data-lucide="settings"></i> Configuración</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="section-title" style="text-align: left; margin-bottom: 1.5rem;">
+                <h2 class="serif">Probador Virtual Premium</h2>
+                <p style="font-size: 0.9rem; color: var(--gray-dark);">Selecciona prendas para visualizarlas en tu avatar 3D.</p>
+            </div>
+
+            <div class="simulator-grid">
+                <!-- Panel de Prendas -->
+                <div class="scroll-panel">
+                    <h3 class="serif" style="font-size: 0.8rem; margin-bottom: 1rem; border-bottom: 1px solid var(--gray-medium); padding-bottom: 0.5rem;">Catálogo IA</h3>
+                    {% for product in products %}
+                    <div class="clothing-item simulator-item" data-type="{{ product.category }}" data-name="{{ product.name }}">
+                        <img src="{{ product.img }}" alt="{{ product.name }}" onerror="this.src='https://via.placeholder.com/300x400?text=Prenda'">
+                        <div class="info">
+                            <p class="serif">{{ product.name }}</p>
+                            <p style="color: var(--accent);">{{ product.category }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Avatar -->
+                <div class="avatar-container" id="avatar-preview">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80" style="opacity: 0.9;">
+                    <div style="position: absolute; bottom: 2rem; left: 0; width: 100%; text-align: center;">
+                        <div class="serif" style="background: rgba(255,255,255,0.8); display: inline-block; padding: 0.5rem 2rem; border: 1px solid var(--primary);">
+                            VISTA 3D EN TIEMPO REAL
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalles -->
+                <div class="card" style="display: flex; flex-direction: column;">
+                    <h3 class="serif" style="font-size: 1rem; margin-bottom: 1.5rem;">Composición del Look</h3>
+                    <div id="look-details" style="font-size: 0.8rem; flex: 1;">
+                        <div style="border-left: 2px solid var(--accent); padding-left: 1rem; margin-bottom: 1.5rem;">
+                            <p class="serif" style="font-size: 0.7rem; color: var(--accent);">TIPO DE CUERPO</p>
+                            <p style="font-weight: 600;">Reloj de Arena</p>
+                        </div>
+                        <div id="selected-items">
+                            <p style="color: #999; font-style: italic;">No hay prendas seleccionadas.</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: auto; padding-top: 2rem;">
+                        <button class="btn" style="width: 100%; margin-bottom: 1rem;">Guardar Combinación</button>
+                        <button class="btn btn-outline" style="width: 100%;">Descargar HD</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        lucide.createIcons();
+        
+        // Simple logic for selection in simulator
+        document.querySelectorAll('.simulator-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const name = item.dataset.name;
+                const type = item.dataset.type;
+                const details = document.getElementById('selected-items');
+                
+                if(details.innerHTML.includes('No hay prendas')) details.innerHTML = '';
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.style.marginBottom = '1rem';
+                itemDiv.style.display = 'flex';
+                itemDiv.style.justifyContent = 'space-between';
+                itemDiv.style.alignItems = 'center';
+                itemDiv.innerHTML = `
+                    <span><strong>${type}:</strong> ${name}</span>
+                    <i data-lucide="x" size="14" style="cursor:pointer" onclick="this.parentElement.remove()"></i>
+                `;
+                details.appendChild(itemDiv);
+                lucide.createIcons();
+            });
+        });
+    </script>
+</body>
+</html>
