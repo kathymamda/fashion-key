@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "fashion_key_secret_key"
+app.secret_key = os.getenv("SECRET_KEY", "fashion_key_secret_key")
 
 # Configuración MongoDB
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
