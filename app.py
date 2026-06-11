@@ -14,6 +14,52 @@ app.secret_key = os.getenv("SECRET_KEY", "fashion_key_secret_key")
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 DB_NAME = os.getenv("DB_NAME", "fashion_key")
 
+class MemoryCursor(list):
+    def limit(self, n):
+        return MemoryCursor(self[:n])
+
+class MemoryCollection:
+    def __init__(self, items=None):
+        self.items = list(items or [])
+
+    def count_documents(self, filter):
+        if not filter or filter == {}:
+            return len(self.items)
+        return sum(
+            1
+            for doc in self.items
+            if all(doc.get(k) == v for k, v in filter.items())
+        )
+
+    def insert_many(self, docs):
+        self.items.extend(docs)
+
+    def insert_one(self, doc):
+        self.items.append(doc)
+
+    def find(self, filter=None):
+        if not filter or filter == {}:
+            return MemoryCursor(self.items)
+        results = [
+            doc
+            for doc in self.items
+            if all(doc.get(k) == v for k, v in filter.items())
+        ]
+        return MemoryCursor(results)
+
+class MemoryDB:
+    def __init__(self):
+        self.users = MemoryCollection()
+        self.body_profiles = MemoryCollection()
+        self.saved_looks = MemoryCollection()
+        self.recommendations = MemoryCollection()
+        self.fashion_links = MemoryCollection()
+        self.favorite_items = MemoryCollection()
+        self.products = MemoryCollection()
+
+    def __getitem__(self, name):
+        return getattr(self, name)
+
 try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     db = client[DB_NAME]
@@ -25,7 +71,9 @@ try:
 except Exception as e:
     print("----------------------------------------")
     print(f"MONGODB ERROR: {e}")
+    print("Usando almacenamiento temporal en memoria")
     print("----------------------------------------")
+    db = MemoryDB()
 
 # Colecciones
 users_col = db['users']
